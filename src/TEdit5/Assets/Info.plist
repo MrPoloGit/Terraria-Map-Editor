@@ -24,5 +24,42 @@
     <string>NSApplication</string>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright © TEdit Contributors</string>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Terraria World</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>wld</string>
+            </array>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.tedit.wld</string>
+            </array>
+        </dict>
+    </array>
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.tedit.wld</string>
+            <key>UTTypeDescription</key>
+            <string>Terraria World</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>wld</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
 </dict>
 </plist>

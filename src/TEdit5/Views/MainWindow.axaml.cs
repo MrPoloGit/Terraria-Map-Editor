@@ -53,6 +53,14 @@ public partial class MainWindow : Window
         }
     }
 
+    public async Task LoadWorldFromPath(string path)
+    {
+        var topLevel = TopLevel.GetTopLevel(this)!;
+        var file = await topLevel.StorageProvider.TryGetFileFromPathAsync(path);
+        if (file != null)
+            await LoadWorld(file);
+    }
+
     private async Task LoadWorld(IStorageFile file)
     {
         var progress = new Progress<ProgressChangedEventArgs>(ProgressChangedEventArgs =>

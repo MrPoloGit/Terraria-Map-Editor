@@ -23,7 +23,9 @@ public partial class World
     /// <summary>
     ///     Triggered when an operation reports progress.
     /// </summary>
+#pragma warning disable CS0067 // subscribed to by consumers (e.g. WPF host) but not raised by this library
     public static event ProgressChangedEventHandler? ProgressChanged;
+#pragma warning restore CS0067
 
     public World()
     {
