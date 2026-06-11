@@ -19,6 +19,58 @@ TEdit - Terraria Map Editor is a stand alone, open source map editor for Terrari
 - [GitHub Releases](https://github.com/TEdit/Terraria-Map-Editor/releases)
 - [Change Log](http://github.com/TEdit/Terraria-Map-Editor/commits/master)
 
+## Building from Source
+
+### Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- Windows only: Windows 10 SDK (for the WPF/legacy build)
+
+### Projects
+
+| Project | UI Framework | Platforms |
+|---------|-------------|-----------|
+| `src/TEdit` | WPF | Windows only |
+| `src/TEdit5` | Avalonia | Windows, macOS, Linux |
+
+### macOS / Linux (Avalonia — TEdit5)
+
+**Run in development:**
+```bash
+dotnet run --project src/TEdit5/TEdit5.csproj -r osx-arm64
+# or for Intel Mac:
+dotnet run --project src/TEdit5/TEdit5.csproj -r osx-x64
+```
+
+**Build a distributable `.app` bundle:**
+```bash
+dotnet publish src/TEdit5/TEdit5.csproj -c Release -r osx-arm64 --self-contained \
+  -p:PublishSingleFile=true -o publish/osx-arm64
+# TEdit.app is created at publish/TEdit.app
+open publish/TEdit.app
+```
+
+To install system-wide: `cp -r publish/TEdit.app /Applications/`
+
+> **First launch on macOS:** if Gatekeeper blocks the app (unsigned binary), right-click → Open → Open, or run `xattr -cr publish/TEdit.app` before opening.
+
+### Windows (WPF — TEdit, legacy)
+
+Open `src/TEdit.slnx` in Visual Studio 2022 and build, or:
+```powershell
+dotnet publish src/TEdit/TEdit.csproj -c Release -r win-x64 --self-contained
+```
+
+### Release builds (all platforms)
+
+```powershell
+# Avalonia (Windows + macOS + Linux)
+.\build-avalonia.ps1 -VersionPrefix "5.0.0" -VersionSuffix "alpha0"
+
+# Legacy WPF Windows build (used by the main build.ps1 pipeline)
+.\build-legacy.ps1
+```
+
 ## Languages
 
 Help update TEdit language support on crowdin https://crowdin.com/project/tedit/invite?h=9c3543b1a29200f5f240fc426a928b1b2694868

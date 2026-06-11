@@ -1242,7 +1242,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
         if (e.Handled) return;
 
         var pointer = e.GetCurrentPoint(this);
-        ActiveTool?.Release(WorldEditor, pointer, WorldCoordinate);
+        ActiveTool?.Release(WorldEditor!, pointer, WorldCoordinate);
 
         IsPanning = false;
         IsSelecting = false;
@@ -1252,7 +1252,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     {
         _pointerPosition = new Point(-1, -1);
         var pointer = e.GetCurrentPoint(this);
-        ActiveTool?.LeaveWindow(WorldEditor, pointer, WorldCoordinate);
+        ActiveTool?.LeaveWindow(WorldEditor!, pointer, WorldCoordinate);
 
 
         TriggerRender(true);
@@ -1270,7 +1270,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
 
         if (ActiveTool != null)
         {
-            ActiveTool?.Press(WorldEditor, pointer, WorldCoordinate);
+            ActiveTool?.Press(WorldEditor!, pointer, WorldCoordinate);
             _pixelTileCache.SetPixelDirty((int)WorldCoordinate.X, (int)WorldCoordinate.Y);
         }
 
@@ -1317,7 +1317,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
 
         if (ActiveTool != null)
         {
-            ActiveTool?.Move(WorldEditor, pointer, WorldCoordinate);
+            ActiveTool?.Move(WorldEditor!, pointer, WorldCoordinate);
             _pixelTileCache.SetPixelDirty((int)WorldCoordinate.X, (int)WorldCoordinate.Y);
         }
 

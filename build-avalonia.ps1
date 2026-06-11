@@ -23,17 +23,18 @@ $platforms = $(
 if (Test-Path -Path ".\$publishPath") { Remove-Item -Path ".\$publishPath" -Force -Recurse }
 
 $platforms | ForEach-Object {
+    $rid = $_
     $buildArgs = @(
         "publish"
         "-c"
         "Release"
         "-r"
-        $_
+        $rid
         "--self-contained"
         "true"
         "-p:PublishSingleFile=true"
         "-o"
-        ".\$publishPath\$_"
+        ".\$publishPath\$rid"
         "/p:VersionPrefix=""$VersionPrefix"""
         "--version-suffix"
         "$VersionSuffix"
@@ -42,5 +43,13 @@ $platforms | ForEach-Object {
 
     & dotnet $buildArgs
 
-    Compress-Archive -Path ".\$publishPath\$_\*" -DestinationPath ".\$ReleasePath\TEditAvalonia-$VersionPrefix-$VersionSuffix-$_.zip"
+    if ($rid -like "osx-*") {
+        # The CreateMacBundle MSBuild target produces TEdit.app one level above the publish dir.
+        # Zip the .app bundle, then remove it so the next osx RID gets a clean slate.
+        $bundlePath = ".\$publishPath\TEdit.app"
+        Compress-Archive -Path $bundlePath -DestinationPath ".\$ReleasePath\TEditAvalonia-$VersionPrefix-$VersionSuffix-$rid.zip"
+        Remove-Item -Path $bundlePath -Force -Recurse
+    } else {
+        Compress-Archive -Path ".\$publishPath\$rid\*" -DestinationPath ".\$ReleasePath\TEditAvalonia-$VersionPrefix-$VersionSuffix-$rid.zip"
+    }
 }

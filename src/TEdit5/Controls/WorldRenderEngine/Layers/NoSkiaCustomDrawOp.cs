@@ -28,7 +28,7 @@ public class NoSkiaCustomDrawOp : ICustomDrawOperation
     public void Render(ImmediateDrawingContext context)
     {
         var leaseFeature = context.TryGetFeature<ISkiaSharpApiLeaseFeature>();
-        if (leaseFeature == null)
+        if (leaseFeature == null && _noSkia != null)
         {
             context.DrawGlyphRun(Brushes.Black, _noSkia);
         }

@@ -54,4 +54,4 @@ if (Test-Path -Path ".\$ReleasePath") { Remove-Item -Path ".\$ReleasePath" -Forc
 New-Item -Path ".\$ReleasePath\" -Force -ItemType "directory"
 
 .\build-legacy.ps1 -ReleasePath $ReleasePath -VersionPrefix $VersionPrefix -VersionSuffix $VersionSuffix -Channel $Channel
-# .\build-avalonia.ps1 -ReleasePath $ReleasePath -VersionPrefix $VersionPrefix -VersionSuffix $VersionSuffix
+.\build-avalonia.ps1 -ReleasePath $ReleasePath -VersionPrefix $VersionPrefix -VersionSuffix $VersionSuffix
