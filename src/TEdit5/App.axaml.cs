@@ -13,7 +13,7 @@ namespace TEdit5;
 
 public partial class App : Application
 {
-    public IServiceProvider Services { get; private set; }
+    public IServiceProvider? Services { get; private set; }
 
     public override void Initialize()
     {
@@ -46,8 +46,8 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var services = (IServiceProvider)this.Resources[typeof(IServiceProvider)];
-        var vm = services.GetRequiredService<MainWindowViewModel>();
+        var services = (IServiceProvider?)this.Resources[typeof(IServiceProvider)];
+        var vm = services!.GetRequiredService<MainWindowViewModel>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow

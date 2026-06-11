@@ -148,7 +148,7 @@ public class WorldPixelsCustomDrawOp : ICustomDrawOperation
 
     public Rect Bounds { get; }
     public bool HitTest(Point p) => false;
-    public bool Equals(ICustomDrawOperation other) => false;
+    public bool Equals(ICustomDrawOperation? other) => false;
 
     public void Render(ImmediateDrawingContext context)
     {
@@ -185,7 +185,6 @@ public class WorldPixelsCustomDrawOp : ICustomDrawOperation
     SKPaint _bitmapPaint = new SKPaint
     {
         IsAntialias = false,
-        FilterQuality = SKFilterQuality.None,
         IsDither = false,
         Color = SKColors.White,
         Style = SKPaintStyle.Fill,

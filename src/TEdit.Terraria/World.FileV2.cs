@@ -1555,7 +1555,6 @@ public partial class World
 
         bool hasHeader2 = false;
         bool hasHeader3 = false;
-        bool hasHeader4 = false;
 
         // check bit[0] to see if header2 has data
         if ((header1 & 0b_0000_0001) == 0b_0000_0001)
@@ -1576,7 +1575,6 @@ public partial class World
             // check bit[0] to see if header4 has data
             if (hasHeader3 && (header3 & 0b_0000_0001) == 0b_0000_0001)
             {
-                hasHeader4 = true;
                 header4 = r.ReadByte();
             }
         }

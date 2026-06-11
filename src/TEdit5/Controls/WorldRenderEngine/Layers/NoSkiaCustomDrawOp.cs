@@ -8,7 +8,7 @@ namespace TEdit5.Controls.WorldRenderEngine.Layers;
 
 public class NoSkiaCustomDrawOp : ICustomDrawOperation
 {
-    private readonly IImmutableGlyphRunReference _noSkia;
+    private readonly IImmutableGlyphRunReference? _noSkia;
 
     public NoSkiaCustomDrawOp(Rect bounds, GlyphRun noSkia)
     {
@@ -23,7 +23,7 @@ public class NoSkiaCustomDrawOp : ICustomDrawOperation
 
     public Rect Bounds { get; }
     public bool HitTest(Point p) => false;
-    public bool Equals(ICustomDrawOperation other) => false;
+    public bool Equals(ICustomDrawOperation? other) => false;
 
     public void Render(ImmediateDrawingContext context)
     {

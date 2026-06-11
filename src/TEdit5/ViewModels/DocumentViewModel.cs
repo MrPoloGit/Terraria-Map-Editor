@@ -26,7 +26,7 @@ public partial class DocumentViewModel : ReactiveObject
         ToolSelection = toolSelection;
         TilePicker = tilePicker;
         Selection = new Selection();
-        IUndoManager undoManager = null;
+        IUndoManager? undoManager = null;
 
         _worldEditor = new WorldEditor(tilePicker, new TEdit.Editor.TileMaskSettings(), World, Selection, undoManager, (x, y, height, width) => { });
     }

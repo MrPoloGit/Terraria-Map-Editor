@@ -10,8 +10,8 @@ namespace TEdit5.Controls.WorldRenderEngine.Layers;
 
 public class BackgroundGridCustomDrawOp : ICustomDrawOperation
 {
-    private SKPaint _rowPaint;
-    private SKPaint _altPaint;
+    private SKPaint? _rowPaint;
+    private SKPaint? _altPaint;
     private readonly int _cellSize = 16;
 
     public BackgroundGridCustomDrawOp(Rect bounds, int cellSize = 16)
@@ -51,7 +51,7 @@ public class BackgroundGridCustomDrawOp : ICustomDrawOperation
 
     public Rect Bounds { get; }
     public bool HitTest(Point p) => false;
-    public bool Equals(ICustomDrawOperation other) => false;
+    public bool Equals(ICustomDrawOperation? other) => false;
 
     public void Render(ImmediateDrawingContext context)
     {

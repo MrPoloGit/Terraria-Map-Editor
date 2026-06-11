@@ -23,7 +23,7 @@ public partial class World
     /// <summary>
     ///     Triggered when an operation reports progress.
     /// </summary>
-    public static event ProgressChangedEventHandler ProgressChanged;
+    public static event ProgressChangedEventHandler? ProgressChanged;
 
     public World()
     {

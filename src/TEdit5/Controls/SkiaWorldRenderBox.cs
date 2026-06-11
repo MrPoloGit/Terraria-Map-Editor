@@ -604,16 +604,16 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     /// <summary>
     /// Defines the <see cref="World"/> property.
     /// </summary>
-    public static readonly DirectProperty<SkiaWorldRenderBox, WorldEditor> WorldEditorProperty =
-    AvaloniaProperty.RegisterDirect<SkiaWorldRenderBox, WorldEditor>(
+    public static readonly DirectProperty<SkiaWorldRenderBox, WorldEditor?> WorldEditorProperty =
+    AvaloniaProperty.RegisterDirect<SkiaWorldRenderBox, WorldEditor?>(
         nameof(WorldEditor),
         o => o.WorldEditor,
         (o, v) => o.WorldEditor = v);
 
 
-    private WorldEditor _worldEditor = null;
+    private WorldEditor? _worldEditor = null;
 
-    public WorldEditor WorldEditor
+    public WorldEditor? WorldEditor
     {
         get => _worldEditor;
         set => SetProperty(ref _worldEditor, value);
@@ -1556,6 +1556,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     /// </returns>
     public Rect FitRectangle(Rect rectangle)
     {
+        if (World is null) return rectangle;
         var size = World.Size;
 
         var x = rectangle.X;
@@ -1775,6 +1776,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     /// <exception cref="System.InvalidOperationException">Thrown if no image is currently set</exception>
     public void SelectAll()
     {
+        if (World is null) return;
         var size = World.Size;
         SelectionRegion = new Rect(0, 0, size.X, size.Y);
     }

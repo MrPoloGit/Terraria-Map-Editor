@@ -7,7 +7,7 @@ public partial class MainWindowViewModel : ReactiveObject
 {
     public IDocumentService DocumentService { get; }
 
-    [Reactive] private DocumentViewModel _selectedDocument;
+    [Reactive] private DocumentViewModel? _selectedDocument;
     [Reactive] private ToolSelectionViewModel _toolSelection;
     [Reactive] private int _progressPercentage;
     [Reactive] private string _progressText = string.Empty;

@@ -25,7 +25,7 @@ public class MinimapPixelsCustomDrawOp : ICustomDrawOperation
     public void Dispose() { }
     public Rect Bounds { get; }
     public bool HitTest(Point p) => false;
-    public bool Equals(ICustomDrawOperation other) => false;
+    public bool Equals(ICustomDrawOperation? other) => false;
 
     public void Render(ImmediateDrawingContext context)
     {
@@ -57,7 +57,7 @@ public class MinimapPixelsCustomDrawOp : ICustomDrawOperation
 
     private SKBitmap CreateBitmapTile()
     {
-        var world = World;
+        var world = World!;
 
         int worldWidth = world.TilesWide;
         int worldHeight = world.TilesHigh;
@@ -106,7 +106,6 @@ public class MinimapPixelsCustomDrawOp : ICustomDrawOperation
         using var paint = new SKPaint
         {
             IsAntialias = true,
-            FilterQuality = SKFilterQuality.Medium,
             IsDither = false,
             Color = SKColors.White,
             Style = SKPaintStyle.Fill,

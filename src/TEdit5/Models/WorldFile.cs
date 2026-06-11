@@ -8,16 +8,16 @@ namespace TEdit5.Models
         /// <summary>
         /// World Name
         /// </summary>
-        [Reactive] public string _name;
+        [Reactive] public string? _name;
 
         /// <summary>
         /// FileInfo
         /// </summary>
-        [Reactive] public FileInfo _fileInfo;
+        [Reactive] public FileInfo? _fileInfo;
 
         /// <summary>
         /// World Headers
         /// </summary>
-        [Reactive] public World _world;
+        [Reactive] public World? _world;
     }
 }

@@ -67,7 +67,7 @@ public partial class PencilTool : ReactiveObject, IMouseTool
     private bool _isRightDown;
     private Vector2Int32 _startPoint;
     private Vector2Int32 _endPoint;
-    private WorldEditor _editor;
+    private WorldEditor? _editor;
 
     private void CheckDirectionandDraw(Vector2Int32 tile)
     {
@@ -97,7 +97,7 @@ public partial class PencilTool : ReactiveObject, IMouseTool
     {
         foreach (Vector2Int32 pixel in Shape.DrawLineTool(_startPoint, to))
         {
-            _editor.SetPixel(pixel.X, pixel.Y);
+            _editor!.SetPixel(pixel.X, pixel.Y);
             //BlendRules.ResetUVCache(_wvm, pixel.X, pixel.Y, 1, 1);
         }
     }
@@ -106,14 +106,14 @@ public partial class PencilTool : ReactiveObject, IMouseTool
     {
         foreach (Vector2Int32 pixel in Shape.DrawLineTool(_startPoint, _endPoint))
         {
-            _editor.SetPixel(pixel.X, pixel.Y);
+            _editor!.SetPixel(pixel.X, pixel.Y);
         }
     }
 
     public void Press(WorldEditor editor, PointerPoint buttons, Point worldCoordinate)
     {
         _editor = editor;
-        _editor.BeginOperationAsync().Wait();
+        _editor!.BeginOperationAsync().Wait();
 
         if (!_isRightDown && !_isLeftDown)
         {
@@ -142,7 +142,7 @@ public partial class PencilTool : ReactiveObject, IMouseTool
 
         if (!_isLeftDown && !_isRightDown)
         {
-            _editor.EndOperationAsync().Wait();
+            _editor!.EndOperationAsync().Wait();
         }
     }
 
