@@ -454,7 +454,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
 
         // "No Skia" text for unsupported platforms
         var text = "Current rendering API is not Skia";
-        var glyphs = text.Select(ch => Typeface.Default.GlyphTypeface.GetGlyph(ch)).ToArray();
+        var glyphs = text.Select(ch => { Typeface.Default.GlyphTypeface.CharacterToGlyphMap.TryGetGlyph(ch, out var g); return g; }).ToArray();
         _noSkia = new GlyphRun(Typeface.Default.GlyphTypeface, 12, text.AsMemory(), glyphs);
     }
 
@@ -937,6 +937,12 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     protected internal ScrollContentPresenter ViewPort = null!;
     protected internal ScrollBar HorizontalScrollBar = null!;
     protected internal ScrollBar VerticalScrollBar = null!;
+
+    /// <inheritdoc />
+    public bool CanHorizontallyScroll { get; set; } = true;
+
+    /// <inheritdoc />
+    public bool CanVerticallyScroll { get; set; } = true;
 
     /// <inheritdoc />
     public Size Extent => new(

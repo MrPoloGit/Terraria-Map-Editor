@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using ReactiveUI.Avalonia;
-using Projektanker.Icons.Avalonia;
-using Projektanker.Icons.Avalonia.MaterialDesign;
+using Optris.Icons.Avalonia;
+using Optris.Icons.Avalonia.MaterialDesign;
 using System;
 
 namespace TEdit5;
@@ -19,7 +19,6 @@ class Program
     public static AppBuilder BuildAvaloniaApp()
     {
         IconProvider.Current
-            //.Register<FontAwesomeIconProvider>()
             .Register<MaterialDesignIconProvider>();
 
         return AppBuilder.Configure<App>()
