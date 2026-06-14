@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>TEdit</string>
+    <key>CFBundleDisplayName</key>
+    <string>TEdit - Terraria Map Editor</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.tedit.tedit5</string>
+    <key>CFBundleVersion</key>
+    <string>5.0.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>5.0.0</string>
+    <key>CFBundleExecutable</key>
+    <string>TEdit5</string>
+    <key>CFBundleIconFile</key>
+    <string>tedit</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © TEdit Contributors</string>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Terraria World</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleTypeIconFile</key>
+            <string>tedit</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>wld</string>
+            </array>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.tedit.wld</string>
+            </array>
+        </dict>
+    </array>
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.tedit.wld</string>
+            <key>UTTypeDescription</key>
+            <string>Terraria World</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+            <key>UTTypeIconFile</key>
+            <string>tedit</string>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>wld</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>

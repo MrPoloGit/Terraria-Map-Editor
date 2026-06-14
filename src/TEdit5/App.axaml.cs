@@ -3,6 +3,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
+using System.Linq;
 using TEdit5.Editor;
 using TEdit5.Services;
 using TEdit5.ViewModels;
@@ -50,10 +52,28 @@ public partial class App : Application
         var vm = services.GetRequiredService<MainWindowViewModel>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
+            var mainWindow = new MainWindow { DataContext = vm };
+            desktop.MainWindow = mainWindow;
+
+            // Handle file open via OS file association (double-click in Finder/Explorer).
+            // On macOS this fires through IActivatableLifetime.Activated with FileActivatedEventArgs.
+            // On Windows/Linux the path arrives in desktop.Args instead.
+            if (this.TryGetFeature<IActivatableLifetime>() is { } activatable)
             {
-                DataContext = vm
-            };
+                activatable.Activated += async (_, e) =>
+                {
+                    if (e is FileActivatedEventArgs fileArgs)
+                        foreach (var f in fileArgs.Files)
+                            await mainWindow.LoadWorldFromPath(f.Path.LocalPath);
+                };
+            }
+
+            // Windows / Linux: file path passed as command-line argument
+            var initialFile = desktop.Args?
+                .FirstOrDefault(a => a.EndsWith(".wld", StringComparison.OrdinalIgnoreCase) && File.Exists(a));
+            if (initialFile != null)
+                mainWindow.Opened += async (_, _) => await mainWindow.LoadWorldFromPath(initialFile);
+
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {

@@ -69,3 +69,7 @@ copilot-instructions.md
 CLAUDE.md
 /.serena/project.yml
 /.serena/
+
+# Updated
+*/.DS_Store
+*/*/.DS_Store
