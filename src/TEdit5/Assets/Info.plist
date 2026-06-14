@@ -31,6 +31,8 @@
             <string>Terraria World</string>
             <key>CFBundleTypeRole</key>
             <string>Editor</string>
+            <key>CFBundleTypeIconFile</key>
+            <string>tedit</string>
             <key>CFBundleTypeExtensions</key>
             <array>
                 <string>wld</string>
@@ -52,6 +54,8 @@
             <array>
                 <string>public.data</string>
             </array>
+            <key>UTTypeIconFile</key>
+            <string>tedit</string>
             <key>UTTypeTagSpecification</key>
             <dict>
                 <key>public.filename-extension</key>
