@@ -65,6 +65,9 @@
   <ItemGroup>
     <None Include="Assets\Info.plist" />
     <None Include="Assets\tedit.icns" />
+    <None Include="Assets\tedit.png" />
+    <None Include="Assets\tedit.desktop" />
+    <None Include="Assets\tedit-world.xml" />
   </ItemGroup>
 
   <!-- macOS .app bundle: run after dotnet publish -r osx-* -->
@@ -77,9 +80,22 @@
     <MakeDir Directories="$(_BundleRoot)/Contents/MacOS" />
     <MakeDir Directories="$(_BundleRoot)/Contents/Resources" />
     <Exec Command="cp -r &quot;$(PublishDir).&quot; &quot;$(_BundleRoot)/Contents/MacOS/&quot;" />
+    <Exec Command="mv &quot;$(_BundleRoot)/Contents/MacOS/TEdit5&quot; &quot;$(_BundleRoot)/Contents/MacOS/TEdit&quot;" />
     <Copy SourceFiles="Assets/Info.plist"  DestinationFiles="$(_BundleRoot)/Contents/Info.plist" />
     <Copy SourceFiles="Assets/tedit.icns"  DestinationFiles="$(_BundleRoot)/Contents/Resources/tedit.icns" />
-    <Exec Command="chmod +x &quot;$(_BundleRoot)/Contents/MacOS/TEdit5&quot;" />
+    <Exec Command="chmod +x &quot;$(_BundleRoot)/Contents/MacOS/TEdit&quot;" />
     <Message Text="Created: $(_BundleRoot)" Importance="High" />
+  </Target>
+
+  <!-- Linux: copy icon/desktop/mime files alongside the binary after dotnet publish -r linux-* -->
+  <Target Name="CopyLinuxAssets" AfterTargets="Publish"
+          Condition="$(RuntimeIdentifier.StartsWith('linux'))">
+    <Move SourceFiles="$(PublishDir)TEdit5" DestinationFiles="$(PublishDir)TEdit" />
+    <Copy SourceFiles="Assets/tedit.png"        DestinationFiles="$(PublishDir)tedit.png" />
+    <Copy SourceFiles="Assets/tedit.desktop"    DestinationFiles="$(PublishDir)tedit.desktop" />
+    <Copy SourceFiles="Assets/tedit-world.xml"  DestinationFiles="$(PublishDir)tedit-world.xml" />
+    <Copy SourceFiles="Assets/install-linux.sh" DestinationFiles="$(PublishDir)install-linux.sh" />
+    <Exec Command="chmod +x &quot;$(PublishDir)TEdit&quot; &quot;$(PublishDir)install-linux.sh&quot;" />
+    <Message Text="Linux assets copied to $(PublishDir)" Importance="High" />
   </Target>
 </Project>

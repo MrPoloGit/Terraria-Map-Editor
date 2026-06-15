@@ -70,6 +70,7 @@ public partial class App : Application
 
             // Windows / Linux: file path passed as command-line argument
             var initialFile = desktop.Args?
+                .Select(a => Path.GetFullPath(a))
                 .FirstOrDefault(a => a.EndsWith(".wld", StringComparison.OrdinalIgnoreCase) && File.Exists(a));
             if (initialFile != null)
                 mainWindow.Opened += async (_, _) => await mainWindow.LoadWorldFromPath(initialFile);

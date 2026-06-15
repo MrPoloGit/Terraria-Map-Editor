@@ -35,6 +35,17 @@ TEdit - Terraria Map Editor is a stand alone, open source map editor for Terrari
 
 ### macOS / Linux (Avalonia — TEdit5)
 
+#### Prerequisites
+
+Install [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). On Ubuntu/Debian you can install without sudo using Microsoft's script:
+
+```bash
+curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0 --install-dir ~/.dotnet
+export PATH="$HOME/.dotnet:$PATH"  # add to ~/.bashrc or ~/.zshrc to persist
+```
+
+#### macOS
+
 **Run in development:**
 ```bash
 dotnet run --project src/TEdit5/TEdit5.csproj -r osx-arm64
@@ -53,6 +64,32 @@ open publish/TEdit.app
 To install system-wide: `cp -r publish/TEdit.app /Applications/`
 
 > **First launch on macOS:** if Gatekeeper blocks the app (unsigned binary), right-click -> Open -> Open, or run `xattr -cr publish/TEdit.app` before opening.
+
+#### Linux
+
+**Run in development:**
+```bash
+dotnet run --project src/TEdit5/TEdit5.csproj -r linux-x64
+# Open a specific world file:
+dotnet run --project src/TEdit5/TEdit5.csproj -r linux-x64 -- /path/to/world.wld
+```
+
+**Build and install (self-contained, no .NET required at runtime):**
+```bash
+dotnet publish src/TEdit5/TEdit5.csproj -c Release -r linux-x64 --self-contained \
+  -p:PublishSingleFile=true -o publish/linux-x64
+
+# Install to ~/.local/bin, register .wld icon and file association:
+bash publish/linux-x64/install-linux.sh
+
+# Set TEdit as the default app for .wld files:
+xdg-mime default tedit.desktop application/x-terraria-world
+```
+
+After installation, double-clicking a `.wld` file in your file manager will open it in TEdit, and you can also launch from the terminal:
+```bash
+TEdit5 /path/to/world.wld
+```
 
 ### Windows (WPF — TEdit, legacy)
 
