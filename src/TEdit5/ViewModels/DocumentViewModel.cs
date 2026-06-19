@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.ComponentModel;
+using Avalonia;
 using TEdit5.Controls;
 using TEdit.Editor;
 using TEdit.Editor.Undo;
@@ -13,6 +14,7 @@ public partial class DocumentViewModel : ReactiveObject
     [Reactive] private int _maxZoom = 6400;
     [Reactive] private Point _cursorTileCoordinate;
     [Reactive] private SkiaWorldRenderBox.SelectionModes _selectionMode;
+    [Reactive] private Rect _selectionRect;
 
     public ToolSelectionViewModel ToolSelection { get; }
     public TilePicker TilePicker { get; }
@@ -29,5 +31,18 @@ public partial class DocumentViewModel : ReactiveObject
         IUndoManager undoManager = null;
 
         _worldEditor = new WorldEditor(tilePicker, new TEdit.Editor.TileMaskSettings(), World, Selection, undoManager, (x, y, height, width) => { });
+
+        // Mirror Selection.SelectionArea → SelectionRect so the render box can display it
+        if (Selection is INotifyPropertyChanged npc)
+        {
+            npc.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName is null or nameof(ISelection.SelectionArea))
+                {
+                    var a = Selection.SelectionArea;
+                    SelectionRect = new Rect(a.X, a.Y, a.Width, a.Height);
+                }
+            };
+        }
     }
 }

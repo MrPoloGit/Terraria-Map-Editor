@@ -2,6 +2,7 @@
 using Avalonia.Input;
 using Avalonia.Rendering.SceneGraph;
 using TEdit5.Services;
+using TEdit5.ViewModels;
 using TEdit.Editor;
 using TEdit.Geometry;
 
@@ -46,6 +47,63 @@ public partial class SelectTool : ReactiveObject, IMouseTool
     public string Tooltip { get; } = "Select Tool";
     [Reactive] private bool _isActive;
     public string IconName { get; } = "mdi-select";
+
+    private bool _isDragging;
+    private Vector2Int32 _startPoint;
+
+    public void Press(WorldEditor editor, PointerPoint buttons, Point worldCoordinate)
+    {
+        if (buttons.Properties.IsLeftButtonPressed)
+        {
+            _isDragging = true;
+            _startPoint = new Vector2Int32((int)worldCoordinate.X, (int)worldCoordinate.Y);
+            editor.Selection.IsActive = false;
+        }
+    }
+
+    public void Move(WorldEditor editor, PointerPoint buttons, Point worldCoordinate)
+    {
+        if (_isDragging && buttons.Properties.IsLeftButtonPressed)
+        {
+            var current = new Vector2Int32((int)worldCoordinate.X, (int)worldCoordinate.Y);
+            editor.Selection.SetRectangle(_startPoint, current);
+        }
+    }
+
+    public void Release(WorldEditor editor, PointerPoint buttons, Point worldCoordinate)
+    {
+        if (_isDragging)
+        {
+            _isDragging = false;
+            var current = new Vector2Int32((int)worldCoordinate.X, (int)worldCoordinate.Y);
+            editor.Selection.SetRectangle(_startPoint, current);
+        }
+    }
+}
+
+public partial class ClipboardTool : ReactiveObject, IMouseTool
+{
+    private readonly ClipboardViewModel _clipboard;
+
+    public ClipboardTool(ClipboardViewModel clipboard)
+    {
+        _clipboard = clipboard;
+    }
+
+    public ICustomDrawOperation? DrawTool { get; }
+    public string Name { get; } = "Clipboard";
+    public string Tooltip { get; } = "Paste Schematic";
+    [Reactive] private bool _isActive;
+    public string IconName { get; } = "mdi-content-paste";
+
+    public void Press(WorldEditor editor, PointerPoint buttons, Point worldCoordinate)
+    {
+        if (buttons.Properties.IsLeftButtonPressed && _clipboard.ActiveBuffer != null)
+        {
+            var anchor = new Vector2Int32((int)worldCoordinate.X, (int)worldCoordinate.Y);
+            _clipboard.PasteAtPosition(editor.World, anchor, editor.Undo);
+        }
+    }
 }
 
 public partial class PencilTool : ReactiveObject, IMouseTool

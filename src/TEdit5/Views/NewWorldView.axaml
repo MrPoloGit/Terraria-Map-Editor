@@ -1,0 +1,96 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:TEdit5.ViewModels"
+        mc:Ignorable="d"
+        x:Class="TEdit5.Views.NewWorldView"
+        x:DataType="vm:NewWorldViewModel"
+        Title="New World"
+        Width="420" Height="560"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <DockPanel Margin="12">
+
+        <!-- Title -->
+        <TextBlock DockPanel.Dock="Top" Text="New World" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" />
+
+        <!-- OK / Cancel -->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,10,0,0">
+            <Button Content="Cancel" Width="90" Click="CancelClick" />
+            <Button Content="Generate" Width="90" Click="OkClick" />
+        </StackPanel>
+
+        <!-- Settings -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="6">
+
+                <!-- World name -->
+                <TextBlock Text="World Name" />
+                <TextBox Text="{Binding Title}" />
+
+                <!-- Seed -->
+                <TextBlock Text="Seed (leave blank for random)" Margin="0,4,0,0" />
+                <TextBox Text="{Binding Seed}" PlaceholderText="random" />
+
+                <!-- Size preset -->
+                <TextBlock Text="Size" Margin="0,4,0,0" />
+                <ComboBox ItemsSource="{Binding SizePresets}"
+                          SelectedIndex="{Binding SizePreset}"
+                          HorizontalAlignment="Stretch" />
+
+                <!-- Custom dimensions (only visible when Custom is selected) -->
+                <Grid ColumnDefinitions="*,8,*" IsVisible="{Binding IsCustomSize}">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Width (tiles)" />
+                        <NumericUpDown Value="{Binding TilesWide}" Minimum="200" Maximum="8400" Increment="100" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Height (tiles)" />
+                        <NumericUpDown Value="{Binding TilesHigh}" Minimum="150" Maximum="2400" Increment="100" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Hill size -->
+                <TextBlock Text="Hill Size" Margin="0,6,0,0" />
+                <Grid ColumnDefinitions="*, 50">
+                    <Slider Grid.Column="0" Value="{Binding HillSize}" Minimum="5" Maximum="100" />
+                    <TextBlock Grid.Column="1" Text="{Binding HillSize, StringFormat={}{0:F0}}" VerticalAlignment="Center" Margin="6,0,0,0" />
+                </Grid>
+
+                <!-- Surface toggles -->
+                <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4,0,0">
+                    <CheckBox Content="Generate Grass" IsChecked="{Binding GenerateGrass}" />
+                    <CheckBox Content="Generate Walls" IsChecked="{Binding GenerateWalls}" />
+                </StackPanel>
+
+                <!-- Caves -->
+                <Border BorderThickness="0,1,0,0" BorderBrush="#555555" Margin="0,8,0,0" Padding="0,8,0,0">
+                    <StackPanel Spacing="4">
+                        <CheckBox Content="Generate Caves" IsChecked="{Binding GenerateCaves}" FontWeight="SemiBold" />
+                        <StackPanel IsEnabled="{Binding GenerateCaves}" Spacing="4" Margin="16,0,0,0">
+                            <CheckBox Content="Surface Caves" IsChecked="{Binding SurfaceCaves}" />
+                            <TextBlock Text="Cave Preset" />
+                            <ComboBox ItemsSource="{Binding CavePresets}"
+                                      SelectedIndex="{Binding CavePreset}"
+                                      HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Underworld -->
+                <Border BorderThickness="0,1,0,0" BorderBrush="#555555" Margin="0,8,0,0" Padding="0,8,0,0">
+                    <StackPanel Spacing="4">
+                        <CheckBox Content="Generate Underworld" IsChecked="{Binding GenerateUnderworld}" FontWeight="SemiBold" />
+                        <StackPanel IsEnabled="{Binding GenerateUnderworld}" Orientation="Horizontal" Spacing="16" Margin="16,0,0,0">
+                            <CheckBox Content="Ash"  IsChecked="{Binding GenerateAsh}" />
+                            <CheckBox Content="Lava" IsChecked="{Binding GenerateLava}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

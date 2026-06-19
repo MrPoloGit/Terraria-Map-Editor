@@ -1,0 +1,106 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TEdit5.ViewModels"
+             xmlns:icons="clr-namespace:Optris.Icons.Avalonia;assembly=Optris.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="280" d:DesignHeight="600"
+             x:Class="TEdit5.Views.ClipboardView"
+             x:DataType="vm:ClipboardViewModel">
+
+    <DockPanel LastChildFill="True">
+
+        <!-- Title -->
+        <TextBlock DockPanel.Dock="Top"
+                   Text="Clipboard / Schematics"
+                   FontWeight="SemiBold"
+                   Margin="4,4,4,2" />
+
+        <!-- Toolbar row -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,*" Margin="2">
+            <Button Grid.Column="0" Content="Empty" HorizontalAlignment="Stretch" Margin="2"
+                    Command="{Binding EmptyClipboardCommand}" />
+            <Button Grid.Column="1" Content="Import" HorizontalAlignment="Stretch" Margin="2"
+                    Click="ImportButton_Clicked" />
+        </Grid>
+
+        <!-- Copy selection button -->
+        <Button DockPanel.Dock="Top" Content="Copy Selection" HorizontalAlignment="Stretch" Margin="4,2"
+                Command="{Binding CopySelectionCommand}" />
+
+        <!-- Paste options -->
+        <Border DockPanel.Dock="Top" BorderThickness="0,1,0,1" BorderBrush="#555555" Margin="0,4,0,4" Padding="4,2">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,*">
+                <CheckBox Grid.Row="0" Grid.Column="0" Content="Empty"   IsChecked="{Binding PasteOptions.PasteEmpty}" />
+                <CheckBox Grid.Row="0" Grid.Column="1" Content="Tiles"   IsChecked="{Binding PasteOptions.PasteTiles}" />
+                <CheckBox Grid.Row="1" Grid.Column="0" Content="Walls"   IsChecked="{Binding PasteOptions.PasteWalls}" />
+                <CheckBox Grid.Row="1" Grid.Column="1" Content="Liquid"  IsChecked="{Binding PasteOptions.PasteLiquids}" />
+                <CheckBox Grid.Row="2" Grid.Column="0" Content="Wires"   IsChecked="{Binding PasteOptions.PasteWires}" />
+                <CheckBox Grid.Row="2" Grid.Column="1" Content="Sprites" IsChecked="{Binding PasteOptions.PasteSprites}" />
+                <CheckBox Grid.Row="3" Grid.Column="0" Content="Replace" IsChecked="{Binding PasteOptions.PasteOverTiles}" />
+            </Grid>
+        </Border>
+
+        <!-- Buffer list -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding LoadedBuffers}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ClipboardBufferEntry">
+                        <Border BorderThickness="0,0,0,1" BorderBrush="#444444" Margin="0,2,0,2" Padding="2">
+                            <StackPanel Orientation="Vertical">
+                                <!-- Name row -->
+                                <TextBlock Text="{Binding Name}"
+                                           HorizontalAlignment="Center"
+                                           FontSize="11"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="2,2,2,2" />
+                                <!-- Size info -->
+                                <TextBlock HorizontalAlignment="Center" FontSize="10" Foreground="#AAAAAA"
+                                           Text="{Binding Buffer.Size}" Margin="2,0,2,4" />
+                                <!-- Action buttons -->
+                                <UniformGrid Columns="3" Margin="2,0">
+                                    <Button ToolTip.Tip="Paste (activate)"
+                                            Padding="4,2" Margin="1"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding SetActiveCommand}">
+                                        <icons:Icon Value="mdi-content-paste" />
+                                    </Button>
+                                    <Button ToolTip.Tip="Export to file"
+                                            Padding="4,2" Margin="1"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding ExportSchematicCommand}">
+                                        <icons:Icon Value="mdi-content-save" />
+                                    </Button>
+                                    <Button ToolTip.Tip="Remove"
+                                            Padding="4,2" Margin="1"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding RemoveSchematicCommand}">
+                                        <icons:Icon Value="mdi-delete" />
+                                    </Button>
+                                    <Button ToolTip.Tip="Rotate 90°"
+                                            Padding="4,2" Margin="1"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding RotateCommand}">
+                                        <icons:Icon Value="mdi-rotate-right" />
+                                    </Button>
+                                    <Button ToolTip.Tip="Flip horizontal"
+                                            Padding="4,2" Margin="1"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding FlipXCommand}">
+                                        <icons:Icon Value="mdi-flip-horizontal" />
+                                    </Button>
+                                    <Button ToolTip.Tip="Flip vertical"
+                                            Padding="4,2" Margin="1"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding FlipYCommand}">
+                                        <icons:Icon Value="mdi-flip-vertical" />
+                                    </Button>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

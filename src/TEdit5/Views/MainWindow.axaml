@@ -33,9 +33,20 @@
 
         <v:PaintModeView Grid.Column="0" DataContext="{Binding ToolSelection}"></v:PaintModeView>
         <Grid Grid.Column="1" Grid.RowSpan="3" RowDefinitions="30,30,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button Grid.Row="0" Click="LoadWorldButton_Clicked" HorizontalAlignment="Stretch">Load World</Button>
+            <Grid Grid.Row="0" ColumnDefinitions="*,4,*,4,*">
+                <Button Grid.Column="0" Click="NewWorldButton_Clicked"  HorizontalAlignment="Stretch">New</Button>
+                <Button Grid.Column="2" Click="LoadWorldButton_Clicked" HorizontalAlignment="Stretch">Load</Button>
+                <Button Grid.Column="4" Click="SaveWorldButton_Clicked" HorizontalAlignment="Stretch">Save</Button>
+            </Grid>
             <TextBox Grid.Row="1" Text="{Binding SelectedDocument.World.Title}"  HorizontalAlignment="Stretch" />
-            <v:WorldPropertiesView Grid.Row="2" DataContext="{Binding SelectedDocument}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <TabControl Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TabItem Header="Properties">
+                    <v:WorldPropertiesView DataContext="{Binding SelectedDocument}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                </TabItem>
+                <TabItem Header="Clipboard">
+                    <v:ClipboardView DataContext="{Binding Clipboard}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                </TabItem>
+            </TabControl>
         </Grid>
 
         <GridSplitter Grid.Column="2" Width="3" ResizeDirection="Columns" Background="Gray" />

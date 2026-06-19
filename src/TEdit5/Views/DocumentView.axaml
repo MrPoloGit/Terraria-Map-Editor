@@ -41,7 +41,8 @@
                 MaxZoom="{Binding MaxZoom, Mode=TwoWay}"
                 MinZoom="{Binding MinZoom, Mode=TwoWay}"
                 WorldCoordinate="{Binding CursorTileCoordinate, Mode=OneWayToSource}"
-				SelectionMode="{Binding SelectionMode, Mode=TwoWay}"/>
+                SelectionMode="{Binding SelectionMode, Mode=TwoWay}"
+                SelectionRegion="{Binding SelectionRect}"/>
 		</Grid>
 	</DockPanel>
 </UserControl>

@@ -4,8 +4,11 @@ using Avalonia.Platform.Storage;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
+using TEdit.Terraria;
 using TEdit5.ViewModels;
+using TEdit5.Services;
 
 namespace TEdit5.Views;
 
@@ -18,9 +21,61 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
+    public async void NewWorldButton_Clicked(object sender, RoutedEventArgs args)
+    {
+        var vm = new NewWorldViewModel();
+        var dialog = new NewWorldView { DataContext = vm };
+        await dialog.ShowDialog(this);
+
+        if (!dialog.Confirmed) return;
+
+        var progress = new Progress<ProgressChangedEventArgs>(e =>
+        {
+            MainWindowViewModel.ProgressPercentage = e.ProgressPercentage;
+            MainWindowViewModel.ProgressText = e.UserState?.ToString() ?? string.Empty;
+        });
+
+        await MainWindowViewModel.DocumentService.CreateWorldAsync(vm.BuildWorld(), progress);
+
+        ((IProgress<ProgressChangedEventArgs>)progress).Report(new ProgressChangedEventArgs(0, string.Empty));
+    }
+
     public async void LoadWorldButton_Clicked(object sender, RoutedEventArgs args)
     {
         await OpenWorldDialog();
+    }
+
+    public async void SaveWorldButton_Clicked(object sender, RoutedEventArgs args)
+    {
+        var doc = MainWindowViewModel.SelectedDocument;
+        if (doc?.World == null) return;
+
+        var topLevel = TopLevel.GetTopLevel(this)!;
+
+        var suggestedName = string.Join("-", doc.World.Title.Split(Path.GetInvalidFileNameChars()));
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save World",
+            SuggestedFileName = suggestedName,
+            DefaultExtension = "wld",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("Terraria World") { Patterns = new[] { "*.wld" } }
+            }
+        });
+
+        if (file == null) return;
+
+        var progress = new Progress<ProgressChangedEventArgs>(e =>
+        {
+            MainWindowViewModel.ProgressPercentage = e.ProgressPercentage;
+            MainWindowViewModel.ProgressText = e.UserState?.ToString() ?? string.Empty;
+        });
+
+        MainWindowViewModel.ProgressText = "Saving…";
+        await World.SaveAsync(doc.World, file.Path.LocalPath, progress: progress);
+        ((IProgress<ProgressChangedEventArgs>)progress).Report(new ProgressChangedEventArgs(0, $"Saved: {file.Name}"));
     }
 
     private async Task OpenWorldDialog()

@@ -3,17 +3,25 @@ using ReactiveUI.Avalonia;
 using Optris.Icons.Avalonia;
 using Optris.Icons.Avalonia.MaterialDesign;
 using System;
+using TEdit5.Cli;
 
 namespace TEdit5;
 
 class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        // CLI verbs run headless — never touch Avalonia.
+        if (args.Length > 0 &&
+            args[0] is "paste-schematic" or "export-schematic" or "--help" or "-h")
+        {
+            Environment.Exit(CliRunner.RunAsync(args).GetAwaiter().GetResult());
+            return;
+        }
+
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()

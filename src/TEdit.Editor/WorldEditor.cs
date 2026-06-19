@@ -41,6 +41,9 @@ public class WorldEditor : IDisposable
     public int _checkTileGeneration = 1;
     public TilePicker TilePicker { get; }
     public TileMaskSettings MaskSettings { get; }
+    public ISelection Selection => _selection;
+    public World World => _world;
+    public IUndoManager? Undo => _undo;
 
     public WorldEditor(
         TilePicker tilePicker,

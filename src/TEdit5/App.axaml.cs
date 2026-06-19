@@ -26,6 +26,7 @@ public partial class App : Application
         // register view models
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<FileManagerViewModel>();
+        services.AddSingleton<ClipboardViewModel>();
 
         // register editing tools
         services.AddSingleton<ToolSelectionViewModel>();
@@ -36,6 +37,7 @@ public partial class App : Application
         //services.AddSingleton<IMouseTool, BrushTool>();
         services.AddSingleton<IMouseTool, PencilTool>();
         services.AddSingleton<IMouseTool, SelectTool>();
+        services.AddSingleton<IMouseTool, ClipboardTool>();
 
         // register services
         services.AddTransient<IDialogService, DialogService>();
