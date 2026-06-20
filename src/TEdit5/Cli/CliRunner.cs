@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using TEdit.Editor.Clipboard;
 using TEdit.Geometry;
@@ -29,15 +30,25 @@ public static class CliRunner
                           --output <out.TEditSch>
         """;
 
+    private const string UsageInspect = """
+        inspect-schematic  --schematic <file.TEditSch>
+        """;
+
+    private const string UsageView = """
+        view-schematic  --schematic <file.TEditSch>
+        (Opens a GUI viewer — cannot be combined with other headless flags.)
+        """;
+
     public static async Task<int> RunAsync(string[] args)
     {
         if (args.Length == 0) return ShowHelp();
 
         return args[0].ToLowerInvariant() switch
         {
-            "paste-schematic"  => await PasteSchematicAsync(args[1..]),
-            "export-schematic" => await ExportSchematicAsync(args[1..]),
-            "--help" or "-h"   => ShowHelp(),
+            "paste-schematic"    => await PasteSchematicAsync(args[1..]),
+            "export-schematic"   => await ExportSchematicAsync(args[1..]),
+            "inspect-schematic"  => InspectSchematic(args[1..]),
+            "--help" or "-h"     => ShowHelp(),
             _ => Error($"Unknown command: {args[0]}")
         };
     }
@@ -72,12 +83,12 @@ public static class CliRunner
 
         var opts = new PasteOptions
         {
-            PasteTiles    = !flags.ContainsKey("no-tiles"),
-            PasteWalls    = !flags.ContainsKey("no-walls"),
-            PasteLiquids  = !flags.ContainsKey("no-liquids"),
-            PasteWires    = !flags.ContainsKey("no-wires"),
-            PasteSprites  = !flags.ContainsKey("no-sprites"),
-            PasteEmpty    = !flags.ContainsKey("no-empty"),
+            PasteTiles     = !flags.ContainsKey("no-tiles"),
+            PasteWalls     = !flags.ContainsKey("no-walls"),
+            PasteLiquids   = !flags.ContainsKey("no-liquids"),
+            PasteWires     = !flags.ContainsKey("no-wires"),
+            PasteSprites   = !flags.ContainsKey("no-sprites"),
+            PasteEmpty     = !flags.ContainsKey("no-empty"),
             PasteOverTiles = !flags.ContainsKey("no-replace"),
         };
 
@@ -130,14 +141,84 @@ public static class CliRunner
         return 0;
     }
 
+    // ───────────────────────────── inspect-schematic ────────────────────────
+
+    private static int InspectSchematic(string[] args)
+    {
+        var flags = ParseArgs(args);
+
+        if (!flags.TryGetValue("schematic", out var schPath))
+            return Error("inspect-schematic requires --schematic.\n" + UsageInspect);
+
+        if (!File.Exists(schPath))
+            return Error($"Schematic file not found: {schPath}");
+
+        var buffer = ClipboardBuffer.Load(schPath);
+        if (buffer == null)
+            return Error("Failed to load schematic.");
+
+        int w = buffer.Size.X, h = buffer.Size.Y;
+        int total = w * h;
+
+        Console.WriteLine($"Schematic : {buffer.Name}");
+        Console.WriteLine($"File      : {schPath}");
+        Console.WriteLine($"Size      : {w} × {h} tiles  ({total:N0} total)");
+        Console.WriteLine($"Chests    : {buffer.Chests.Count}");
+        Console.WriteLine($"Signs     : {buffer.Signs.Count}");
+        Console.WriteLine($"Entities  : {buffer.TileEntities.Count}");
+        Console.WriteLine();
+
+        // Count tile types
+        var tileCounts = new Dictionary<ushort, int>();
+        var wallCounts = new Dictionary<ushort, int>();
+        int emptyTiles = 0;
+
+        for (int x = 0; x < w; x++)
+        for (int y = 0; y < h; y++)
+        {
+            var t = buffer.Tiles[x, y];
+            if (t.IsActive)
+                tileCounts[t.Type] = (tileCounts.TryGetValue(t.Type, out var tc) ? tc : 0) + 1;
+            else
+                emptyTiles++;
+
+            if (t.Wall != 0)
+                wallCounts[t.Wall] = (wallCounts.TryGetValue(t.Wall, out var wc) ? wc : 0) + 1;
+        }
+
+        Console.WriteLine($"Tile breakdown ({tileCounts.Count} distinct types, {emptyTiles:N0} air):");
+        foreach (var kv in tileCounts.OrderByDescending(k => k.Value).Take(20))
+        {
+            double pct = kv.Value * 100.0 / total;
+            Console.WriteLine($"  Tile {kv.Key,5}:  {kv.Value,7:N0}  ({pct:F1}%)");
+        }
+
+        if (wallCounts.Count > 0)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Wall breakdown ({wallCounts.Count} distinct types):");
+            foreach (var kv in wallCounts.OrderByDescending(k => k.Value).Take(10))
+            {
+                double pct = kv.Value * 100.0 / total;
+                Console.WriteLine($"  Wall {kv.Key,5}:  {kv.Value,7:N0}  ({pct:F1}%)");
+            }
+        }
+
+        return 0;
+    }
+
     // ───────────────────────────── helpers ──────────────────────────────────
 
     private static int ShowHelp()
     {
-        Console.WriteLine("TEdit CLI — headless schematic operations\n");
+        Console.WriteLine("TEdit CLI — headless and viewer schematic operations\n");
         Console.WriteLine(UsagePaste);
         Console.WriteLine();
         Console.WriteLine(UsageExport);
+        Console.WriteLine();
+        Console.WriteLine(UsageInspect);
+        Console.WriteLine();
+        Console.WriteLine(UsageView);
         return 0;
     }
 
@@ -159,14 +240,19 @@ public static class CliRunner
             if (!arg.StartsWith("--")) continue;
             var key = arg[2..];
             if (i + 1 < args.Length && !args[i + 1].StartsWith("--"))
-            {
                 result[key] = args[++i];
-            }
             else
-            {
                 result[key] = "";
-            }
         }
         return result;
+    }
+
+    /// <summary>
+    /// Public helper used by Program.cs to extract a single flag from a partial arg array.
+    /// </summary>
+    public static string? ExtractFlag(string[] args, string key)
+    {
+        var flags = ParseArgs(args);
+        return flags.TryGetValue(key, out var v) && v.Length > 0 ? v : null;
     }
 }

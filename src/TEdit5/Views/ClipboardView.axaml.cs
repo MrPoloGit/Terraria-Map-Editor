@@ -22,7 +22,8 @@ public partial class ClipboardView : UserControl
 
         if (DataContext is ClipboardViewModel vm)
         {
-            vm.ExportRequested += OnExportRequested;
+            vm.ExportRequested  += OnExportRequested;
+            vm.ViewerRequested  += OnViewerRequested;
         }
     }
 
@@ -42,6 +43,16 @@ public partial class ClipboardView : UserControl
 
         if (file != null)
             Vm.ExportToPath(entry, file.Path.LocalPath);
+    }
+
+    private void OnViewerRequested(ClipboardBufferEntry entry)
+    {
+        var window = SchematicViewerWindow.CreateFromBuffer(entry.Buffer);
+        var owner  = TopLevel.GetTopLevel(this) as Window;
+        if (owner != null)
+            window.Show(owner);
+        else
+            window.Show();
     }
 
     public async void ImportButton_Clicked(object? sender, RoutedEventArgs e)

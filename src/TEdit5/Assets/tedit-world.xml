@@ -2,6 +2,13 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/x-terraria-world">
     <comment>Terraria World File</comment>
+    <icon name="tedit"/>
     <glob pattern="*.wld"/>
+  </mime-type>
+  <mime-type type="application/x-teditsch">
+    <comment>TEdit Schematic</comment>
+    <icon name="tedit"/>
+    <glob pattern="*.TEditSch"/>
+    <glob pattern="*.teditsch"/>
   </mime-type>
 </mime-info>

@@ -24,8 +24,10 @@
     <string>NSApplication</string>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright © TEdit Contributors</string>
+
     <key>CFBundleDocumentTypes</key>
     <array>
+        <!-- Terraria world files (.wld) -->
         <dict>
             <key>CFBundleTypeName</key>
             <string>Terraria World</string>
@@ -33,6 +35,8 @@
             <string>Editor</string>
             <key>CFBundleTypeIconFile</key>
             <string>tedit</string>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
             <key>CFBundleTypeExtensions</key>
             <array>
                 <string>wld</string>
@@ -42,8 +46,33 @@
                 <string>com.tedit.wld</string>
             </array>
         </dict>
+        <!-- TEdit schematic files (.TEditSch) -->
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>TEdit Schematic</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleTypeIconFile</key>
+            <string>tedit</string>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>TEditSch</string>
+            </array>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.tedit.teditsch</string>
+            </array>
+        </dict>
     </array>
-    <key>UTImportedTypeDeclarations</key>
+
+    <!--
+        UTExportedTypeDeclarations: TEdit declares ownership of these types.
+        This causes macOS to display the TEdit icon on matching files in Finder
+        once the app has been launched (or lsregister is called).
+    -->
+    <key>UTExportedTypeDeclarations</key>
     <array>
         <dict>
             <key>UTTypeIdentifier</key>
@@ -61,6 +90,25 @@
                 <key>public.filename-extension</key>
                 <array>
                     <string>wld</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.tedit.teditsch</string>
+            <key>UTTypeDescription</key>
+            <string>TEdit Schematic</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+            <key>UTTypeIconFile</key>
+            <string>tedit</string>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>TEditSch</string>
                 </array>
             </dict>
         </dict>

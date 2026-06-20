@@ -5,5 +5,5 @@ Exec=TEdit %f
 Icon=tedit
 Type=Application
 Categories=Game;
-MimeType=application/x-terraria-world;
+MimeType=application/x-terraria-world;application/x-teditsch;
 StartupNotify=true

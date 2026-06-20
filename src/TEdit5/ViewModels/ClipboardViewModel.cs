@@ -22,6 +22,7 @@ public partial class ClipboardViewModel : ReactiveObject
     public PasteOptions PasteOptions { get; } = new();
 
     public event Action<ClipboardBufferEntry>? ExportRequested;
+    public event Action<ClipboardBufferEntry>? ViewerRequested;
     public event Action? ImportRequested;
 
     public ReactiveCommand<Unit, Unit> EmptyClipboardCommand { get; }
@@ -54,10 +55,9 @@ public partial class ClipboardViewModel : ReactiveObject
         ActiveBuffer = entry;
     }
 
-    public void RequestExport(ClipboardBufferEntry entry)
-    {
-        ExportRequested?.Invoke(entry);
-    }
+    public void RequestExport(ClipboardBufferEntry entry) => ExportRequested?.Invoke(entry);
+
+    public void OpenViewer(ClipboardBufferEntry entry) => ViewerRequested?.Invoke(entry);
 
     public void ExportToPath(ClipboardBufferEntry entry, string path)
     {

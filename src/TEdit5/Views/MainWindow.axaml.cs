@@ -82,33 +82,58 @@ public partial class MainWindow : Window
     {
         var fileTypes = new List<FilePickerFileType>
         {
-            new FilePickerFileType("World File")
+            new FilePickerFileType("All TEdit Files")
             {
-                Patterns = new [] { "*.wld" },
-                AppleUniformTypeIdentifiers = new [] { "wld" },
-                MimeTypes = new []{ "application/octet-stream" }
+                Patterns = new[] { "*.wld", "*.TEditSch" },
+                MimeTypes = new[] { "application/x-terraria-world", "application/x-teditsch" }
+            },
+            new FilePickerFileType("Terraria World")
+            {
+                Patterns = new[] { "*.wld" },
+                MimeTypes = new[] { "application/x-terraria-world" }
+            },
+            new FilePickerFileType("TEdit Schematic")
+            {
+                Patterns = new[] { "*.TEditSch" },
+                MimeTypes = new[] { "application/x-teditsch" }
             },
         };
 
-        // Get top level from the current control. Alternatively, you can use Window reference instead.
         var topLevel = TopLevel.GetTopLevel(this)!;
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Open Text File",
+            Title = "Open World or Schematic",
             AllowMultiple = false,
             FileTypeFilter = fileTypes
         });
 
         if (files.Count == 1)
-        {
-            var file = files[0];
+            await OpenFile(files[0]);
+    }
 
+    private async Task OpenFile(IStorageFile file)
+    {
+        var path = file.Path.LocalPath;
+        if (path.EndsWith(".TEditSch", StringComparison.OrdinalIgnoreCase))
+        {
+            var viewer = SchematicViewerWindow.CreateFromPath(path);
+            viewer.Show(this);
+        }
+        else
+        {
             await LoadWorld(file);
         }
     }
     public async Task LoadWorldFromPath(string path)
     {
+        if (path.EndsWith(".TEditSch", StringComparison.OrdinalIgnoreCase))
+        {
+            var viewer = SchematicViewerWindow.CreateFromPath(path);
+            viewer.Show(this);
+            return;
+        }
+
         var topLevel = TopLevel.GetTopLevel(this)!;
         var file = await topLevel.StorageProvider.TryGetFileFromPathAsync(path);
         if (file != null)

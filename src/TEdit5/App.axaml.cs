@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,32 +18,36 @@ public partial class App : Application
 {
     public IServiceProvider Services { get; private set; }
 
+    /// <summary>
+    /// Set by Program.cs before Avalonia starts when a .TEditSch path is given via CLI.
+    /// The App will open SchematicViewerWindow as the main window in that case.
+    /// </summary>
+    public static string? PendingSchematicPath { get; set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
 
         var services = new ServiceCollection();
 
-        // register view models
+        // view models
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<FileManagerViewModel>();
         services.AddSingleton<ClipboardViewModel>();
 
-        // register editing tools
+        // editing tools
         services.AddSingleton<ToolSelectionViewModel>();
         services.AddSingleton<TilePicker>();
         services.AddSingleton<IDocumentService, DocumentService>();
 
         services.AddSingleton<IMouseTool, ArrowTool>();
-        //services.AddSingleton<IMouseTool, BrushTool>();
         services.AddSingleton<IMouseTool, PencilTool>();
         services.AddSingleton<IMouseTool, SelectTool>();
         services.AddSingleton<IMouseTool, ClipboardTool>();
 
-        // register services
+        // services
         services.AddTransient<IDialogService, DialogService>();
 
-        //services.AddSingleton<IMyInterface, MyImplementation>()
         var serviceProvider = services.BuildServiceProvider();
         this.Resources[typeof(IServiceProvider)] = serviceProvider;
         Services = serviceProvider;
@@ -51,41 +56,70 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var services = (IServiceProvider)this.Resources[typeof(IServiceProvider)];
-        var vm = services.GetRequiredService<MainWindowViewModel>();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            // Schematic-viewer mode: skip the main editor window.
+            if (PendingSchematicPath != null)
+            {
+                var viewer = SchematicViewerWindow.CreateFromPath(PendingSchematicPath);
+                desktop.MainWindow = viewer;
+                base.OnFrameworkInitializationCompleted();
+                return;
+            }
+
+            var vm         = services.GetRequiredService<MainWindowViewModel>();
             var mainWindow = new MainWindow { DataContext = vm };
             desktop.MainWindow = mainWindow;
 
-            // Handle file open via OS file association (double-click in Finder/Explorer).
-            // On macOS this fires through IActivatableLifetime.Activated with FileActivatedEventArgs.
-            // On Windows/Linux the path arrives in desktop.Args instead.
+            // macOS: file opened via Finder / double-click (IActivatableLifetime).
             if (this.TryGetFeature<IActivatableLifetime>() is { } activatable)
             {
                 activatable.Activated += async (_, e) =>
                 {
                     if (e is FileActivatedEventArgs fileArgs)
+                    {
                         foreach (var f in fileArgs.Files)
-                            await mainWindow.LoadWorldFromPath(f.Path.LocalPath);
+                        {
+                            var path = f.Path.LocalPath;
+                            if (path.EndsWith(".TEditSch", StringComparison.OrdinalIgnoreCase))
+                                OpenSchematicViewer(path, mainWindow);
+                            else
+                                await mainWindow.LoadWorldFromPath(path);
+                        }
+                    }
                 };
             }
 
-            // Windows / Linux: file path passed as command-line argument
-            var initialFile = desktop.Args?
+            // Windows / Linux: file path passed as CLI argument.
+            var args = desktop.Args ?? Array.Empty<string>();
+
+            var worldArg = args
                 .Select(a => Path.GetFullPath(a))
                 .FirstOrDefault(a => a.EndsWith(".wld", StringComparison.OrdinalIgnoreCase) && File.Exists(a));
-            if (initialFile != null)
-                mainWindow.Opened += async (_, _) => await mainWindow.LoadWorldFromPath(initialFile);
 
+            var schArg = args
+                .Select(a => Path.GetFullPath(a))
+                .FirstOrDefault(a => a.EndsWith(".TEditSch", StringComparison.OrdinalIgnoreCase) && File.Exists(a));
+
+            if (worldArg != null)
+                mainWindow.Opened += async (_, _) => await mainWindow.LoadWorldFromPath(worldArg);
+
+            if (schArg != null)
+                mainWindow.Opened += (_, _) => OpenSchematicViewer(schArg, mainWindow);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = new MainWindow
-            {
-                DataContext = vm
-            };
+            var vm = services.GetRequiredService<MainWindowViewModel>();
+            singleViewPlatform.MainView = new MainWindow { DataContext = vm };
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void OpenSchematicViewer(string path, Window owner)
+    {
+        var viewer = SchematicViewerWindow.CreateFromPath(path);
+        viewer.Show(owner);
     }
 }

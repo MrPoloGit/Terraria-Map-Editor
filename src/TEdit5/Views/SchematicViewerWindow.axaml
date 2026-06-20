@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:TEdit5.ViewModels"
+        mc:Ignorable="d"
+        x:Class="TEdit5.Views.SchematicViewerWindow"
+        x:DataType="vm:SchematicViewerViewModel"
+        Title="{Binding Title}"
+        Icon="/Assets/tedit.png"
+        Width="900" Height="680"
+        WindowStartupLocation="CenterScreen">
+
+    <DockPanel>
+
+        <!-- Toolbar -->
+        <Border DockPanel.Dock="Top"
+                Padding="8,6"
+                BorderThickness="0,0,0,1"
+                BorderBrush="#444444">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="SemiBold" FontSize="14"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="{Binding SizeInfo}"
+                           Foreground="#AAAAAA"
+                           VerticalAlignment="Center" />
+                <Separator Width="1" Background="#444444" Margin="4,0" />
+                <Button Content="−" Width="28" Command="{Binding ZoomOutCommand}" />
+                <TextBlock Text="{Binding ZoomLabel}"
+                           Width="44"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           TextAlignment="Center" />
+                <Button Content="+" Width="28" Command="{Binding ZoomInCommand}" />
+                <Button Content="Fit" Width="40" Command="{Binding ZoomFitCommand}" />
+            </StackPanel>
+        </Border>
+
+        <!-- Scrollable schematic canvas -->
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      Background="#1E1E2E">
+            <Image Source="{Binding SchematicBitmap}"
+                   Width="{Binding DisplayWidth}"
+                   Height="{Binding DisplayHeight}"
+                   Stretch="Fill"
+                   RenderOptions.BitmapInterpolationMode="None"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Margin="16" />
+        </ScrollViewer>
+
+    </DockPanel>
+</Window>
