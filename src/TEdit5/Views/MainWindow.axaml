@@ -7,8 +7,8 @@
         xmlns:c="clr-namespace:TEdit5.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TEdit5.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="TEdit51"
+        Icon="/Assets/tedit.png"
+        Title="TEdit"
         x:DataType="vm:MainWindowViewModel"
         >
     <Window.Resources>

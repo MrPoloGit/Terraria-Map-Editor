@@ -454,7 +454,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
 
         // "No Skia" text for unsupported platforms
         var text = "Current rendering API is not Skia";
-        var glyphs = text.Select(ch => Typeface.Default.GlyphTypeface.GetGlyph(ch)).ToArray();
+        var glyphs = text.Select(ch => { Typeface.Default.GlyphTypeface.CharacterToGlyphMap.TryGetGlyph(ch, out var g); return g; }).ToArray();
         _noSkia = new GlyphRun(Typeface.Default.GlyphTypeface, 12, text.AsMemory(), glyphs);
     }
 
@@ -937,6 +937,20 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     protected internal ScrollContentPresenter ViewPort = null!;
     protected internal ScrollBar HorizontalScrollBar = null!;
     protected internal ScrollBar VerticalScrollBar = null!;
+
+    /// <inheritdoc />
+    public bool CanHorizontallyScroll
+    {
+        get => IsHorizontalBarVisible;
+        set { }
+    }
+
+    /// <inheritdoc />
+    public bool CanVerticallyScroll
+    {
+        get => IsVerticalBarVisible;
+        set { }
+    }
 
     /// <inheritdoc />
     public Size Extent => new(
@@ -1550,6 +1564,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     /// </returns>
     public Rect FitRectangle(Rect rectangle)
     {
+        if (World is null) return rectangle;
         var size = World.Size;
 
         var x = rectangle.X;
@@ -1769,6 +1784,7 @@ public class SkiaWorldRenderBox : TemplatedControl, IScrollable
     /// <exception cref="System.InvalidOperationException">Thrown if no image is currently set</exception>
     public void SelectAll()
     {
+        if (World is null) return;
         var size = World.Size;
         SelectionRegion = new Rect(0, 0, size.X, size.Y);
     }

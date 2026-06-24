@@ -4,10 +4,14 @@
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!-- Windows-only settings -->
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,11 +26,12 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.17" />
-    <PackageReference Include="bodong.Avalonia.PropertyGrid" Version="11.3.11.1" />
-    <PackageReference Include="bodong.PropertyModels" Version="11.3.11.1" />
-    <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.6.2" />
+    <PackageReference Include="bodong.Avalonia.PropertyGrid" Version="12.0.4.1" />
+    <PackageReference Include="bodong.PropertyModels" Version="12.0.0" />
+    <PackageReference Include="Optris.Icons.Avalonia" Version="12.0.6" />
+    <PackageReference Include="Optris.Icons.Avalonia.MaterialDesign" Version="12.0.6" />
 
-	<PackageReference Include="ReactiveUI" Version="23.2.27" />
+	<PackageReference Include="ReactiveUI" Version="23.2.28" />
 	<PackageReference Include="ReactiveUI.SourceGenerators" Version="3.1.0" PrivateAssets="all" />
 
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
@@ -55,4 +60,42 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\WorldPropertiesView.axaml" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="Assets\Info.plist" />
+    <None Include="Assets\tedit.icns" />
+    <None Include="Assets\tedit.png" />
+    <None Include="Assets\tedit.desktop" />
+    <None Include="Assets\tedit-world.xml" />
+  </ItemGroup>
+
+  <!-- macOS .app bundle: run after dotnet publish -r osx-* -->
+  <Target Name="CreateMacBundle" AfterTargets="Publish"
+          Condition="$(RuntimeIdentifier.StartsWith('osx'))">
+    <PropertyGroup>
+      <_BundleRoot>$(PublishDir)..\TEdit.app</_BundleRoot>
+    </PropertyGroup>
+    <RemoveDir Directories="$(_BundleRoot)" />
+    <MakeDir Directories="$(_BundleRoot)/Contents/MacOS" />
+    <MakeDir Directories="$(_BundleRoot)/Contents/Resources" />
+    <Exec Command="cp -r &quot;$(PublishDir).&quot; &quot;$(_BundleRoot)/Contents/MacOS/&quot;" />
+    <Exec Command="mv &quot;$(_BundleRoot)/Contents/MacOS/TEdit5&quot; &quot;$(_BundleRoot)/Contents/MacOS/TEdit&quot;" />
+    <Copy SourceFiles="Assets/Info.plist"  DestinationFiles="$(_BundleRoot)/Contents/Info.plist" />
+    <Copy SourceFiles="Assets/tedit.icns"  DestinationFiles="$(_BundleRoot)/Contents/Resources/tedit.icns" />
+    <Exec Command="chmod +x &quot;$(_BundleRoot)/Contents/MacOS/TEdit&quot;" />
+    <Message Text="Created: $(_BundleRoot)" Importance="High" />
+  </Target>
+
+  <!-- Linux: copy icon/desktop/mime files alongside the binary after dotnet publish -r linux-* -->
+  <Target Name="CopyLinuxAssets" AfterTargets="Publish"
+          Condition="$(RuntimeIdentifier.StartsWith('linux'))">
+    <Move SourceFiles="$(PublishDir)TEdit5" DestinationFiles="$(PublishDir)TEdit" />
+    <Copy SourceFiles="Assets/tedit.png"        DestinationFiles="$(PublishDir)tedit.png" />
+    <Copy SourceFiles="Assets/tedit.desktop"    DestinationFiles="$(PublishDir)tedit.desktop" />
+    <Copy SourceFiles="Assets/tedit-world.xml"  DestinationFiles="$(PublishDir)tedit-world.xml" />
+    <Copy SourceFiles="Assets/install-linux.sh" DestinationFiles="$(PublishDir)install-linux.sh" />
+    <Exec Command="chmod +x &quot;$(PublishDir)TEdit&quot; &quot;$(PublishDir)install-linux.sh&quot;" />
+    <Message Text="Linux assets copied to $(PublishDir)" Importance="High" />
+  </Target>
 </Project>

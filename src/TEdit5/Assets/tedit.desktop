@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=TEdit
+Comment=Terraria Map Editor
+Exec=TEdit %f
+Icon=tedit
+Type=Application
+Categories=Game;
+MimeType=application/x-terraria-world;
+StartupNotify=true
